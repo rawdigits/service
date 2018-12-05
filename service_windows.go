@@ -13,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/registry"
 	"golang.org/x/sys/windows/svc"
 	"golang.org/x/sys/windows/svc/eventlog"
@@ -218,6 +219,17 @@ func (ws *windowsService) Install() error {
 	if err != nil {
 		return err
 	}
+
+	//Auto restart stuff
+
+	//ra := mgr.RecoveryAction{Type: windows.SC_ACTION_RESTART, Delay: time.Duration(time.Second * 1)}
+	var ras []mgr.RecoveryAction
+	for i := 1; i < 3; i++ {
+		ra := mgr.RecoveryAction{Type: windows.SC_ACTION_RESTART, Delay: time.Duration(time.Second * time.Duration(i))}
+		ras = append(ras, ra)
+	}
+	s.SetRecoveryActions(ras, 60)
+
 	defer s.Close()
 	err = eventlog.InstallAsEventCreate(ws.Name, eventlog.Error|eventlog.Warning|eventlog.Info)
 	if err != nil {
