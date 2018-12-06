@@ -228,7 +228,7 @@ func (ws *windowsService) Install() error {
 		ra := mgr.RecoveryAction{Type: windows.SC_ACTION_RESTART, Delay: time.Duration(time.Second * time.Duration(i))}
 		ras = append(ras, ra)
 	}
-	s.SetRecoveryActions(ras, 60)
+	s.SetRecoveryActions(ras, 5)
 
 	defer s.Close()
 	err = eventlog.InstallAsEventCreate(ws.Name, eventlog.Error|eventlog.Warning|eventlog.Info)
